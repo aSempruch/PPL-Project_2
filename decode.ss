@@ -42,6 +42,71 @@
  )
 )
 
+(define nloopB
+ (lambda (par n)
+  (cond
+   ((validOccurences (countLetters (flatten (parHandler par (encode-n n)))0))n)
+   ((> n 26) -1)
+   (else (nloopB par (+ n 1)))
+  )
+ )
+)
+
+(define validOccurences
+ (lambda (nums)
+  (cond
+   ((and (eCheck nums) (tCheck nums) (aCheck nums))#t)
+   (else #f)
+  )
+ )
+)
+
+(define eCheck
+ (lambda (nums)
+  (cond
+   ((and (equal? (car (sort nums >)) (list-ref nums 4)) (not(equal? (list-ref nums 0)(list-ref nums 1)))) #t)
+   (else #f)
+  )
+ )
+)
+(define tCheck
+ (lambda (nums)
+  (cond
+   ((and (equal? (list-ref (sort nums >) 1) (list-ref nums 19)) (not(equal? (list-ref nums 1)(list-ref nums 2)))) #t)
+   (else #f)
+  )
+ )
+)
+(define aCheck
+ (lambda (nums)
+  (cond
+   ((and (equal? (list-ref (sort nums >) 2) (list-ref nums 0)) (not(equal? (list-ref nums 2)(list-ref nums 3)))) #t)
+   (else #f)
+  )
+ )
+)
+
+
+
+(define countLetters
+ (lambda (fpar char)
+  (cond
+   ((> char 25) empty)
+   (else (append (list (numOfOcc fpar char)) (countLetters fpar (+ 1 char))))
+  )
+ )
+)
+
+(define numOfOcc
+ (lambda (fpar char)
+  (cond
+   ((null? fpar) 0)
+   ((equal? (ltv (car fpar)) char) (+ 1 (numOfOcc (cdr fpar) char)))
+   (else (+ 0 (numOfOcc (cdr fpar) char)))
+  )
+ )
+)
+
 ;;Returns the number of proper words for a given n
 (define try
  (lambda (par)
@@ -57,6 +122,31 @@
  (lambda(x)
   (cond ((null? x)0)
    (else (+ 1 (wordCount(cdr x))))
+  )
+ )
+)
+
+(define letterCount
+ (lambda (x)
+  (cond ((null? x)0)
+   (else (+ (numLetters (car x)) (letterCount(cdr x))))
+  )
+ )
+)
+
+(define numLetters
+ (lambda (x)
+  (cond ((null? x)0)
+   (else (+ 1 (numLetters (cdr x))))
+  )
+ )
+)
+
+(define flatten
+ (lambda (p)
+  (cond 
+   ((null? p) empty)
+   (else (append (car p) (flatten (cdr p))))
   )
  )
 )
@@ -107,10 +197,10 @@
 ;;generate a decoder using frequency analysis
 ;;INPUT:same as above
 ;;OUTPUT:same as above
-(define Gen-Decoder-B
-  (lambda (p)
-    'SOME_CODE_GOES_HERE ;; *** FUNCTION BODY IS MISSING ***
-    ))
+;(define Gen-Decoder-B
+;  (lambda (p)
+;   (encode-n (nloopB p 0 (letterCount p)))
+;  ))
 
 ;; -----------------------------------------------------
 ;; CODE-BREAKER FUNCTION
