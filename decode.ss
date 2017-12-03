@@ -6,7 +6,7 @@
 ;; -----------------------------------------------------
 ;; ENVIRONMENT
 ;; contains "ltv", "vtl",and "reduce" definitions
-#lang racket
+;;#lang racket
 (load "include.ss")
 
 ;; contains a test document consisting of three paragraphs. 
@@ -31,6 +31,36 @@
 	)
 )
 
+;;Loops through all possible values of n until it finds a match
+(define nloop
+ (lambda (par n numWords)
+  (cond 
+   ((>= (try (parHandler par (encode-n n))) (quotient numWords 2)) n)
+   ((> n 26) -1)
+   (else (nloop par (+ n 1) numWords))
+  )
+ )
+)
+
+;;Returns the number of proper words for a given n
+(define try
+ (lambda (par)
+  (cond
+   ((null? par) 0)
+   ((spell-checker (car par)) (+ 1 (try (cdr par))))
+   (else (+ 0 (try (cdr par))))
+  )
+ )
+)
+
+(define wordCount 
+ (lambda(x)
+  (cond ((null? x)0)
+   (else (+ 1 (wordCount(cdr x))))
+  )
+ )
+)
+
 ;; -----------------------------------------------------
 ;; SPELL CHECKER FUNCTION
 
@@ -39,7 +69,7 @@
 ;;OUTPUT:true(#t) or false(#f)
 (define spell-checker 
   (lambda (w)
-   'SOME_CODE_GOES_HERE ;; *** FUNCTION BODY IS MISSING *** 
+	(if (member w dictionary) #t #f)
    ))
 
 ;; -----------------------------------------------------
@@ -59,7 +89,7 @@
 ;;OUTPUT: an encoded document using a provided encoder
 (define encode-d;;this encoder is supposed to be the output of "encode-n"
   (lambda (d encoder)
-		(map (lambda (k) (parHandler k encoder)) d) ;;For each paragraph, pass it on to the paragraph handler
+   (map (lambda (k) (parHandler k encoder)) d) ;;For each paragraph, pass it on to the paragraph handler
     ))
     
 ;; -----------------------------------------------------
@@ -71,8 +101,8 @@
 ;;OUTPUT:a decoder, whose input=a word, output=decoded word
 (define Gen-Decoder-A
   (lambda (p)
-    'SOME_CODE_GOES_HERE ;; *** FUNCTION BODY IS MISSING ***
-    ))
+   (encode-n (nloop p 0 (wordCount p)))
+  ))
 
 ;;generate a decoder using frequency analysis
 ;;INPUT:same as above
