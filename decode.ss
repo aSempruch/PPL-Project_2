@@ -6,6 +6,7 @@
 ;; -----------------------------------------------------
 ;; ENVIRONMENT
 ;; contains "ltv", "vtl",and "reduce" definitions
+#lang racket
 (load "include.ss")
 
 ;; contains a test document consisting of three paragraphs. 
@@ -23,6 +24,12 @@
 
 ;; *** CODE FOR ANY HELPER FUNCTION GOES HERE ***
 
+;;Breaks down paragraphs into words
+(define parHandler
+	(lambda (par encoder)
+		(map (lambda (k) (encoder k)) par) ;;For each word, apply the provided encoder
+	)
+)
 
 ;; -----------------------------------------------------
 ;; SPELL CHECKER FUNCTION
@@ -44,15 +51,15 @@
 (define encode-n
   (lambda (n);;"n" is the distance, eg. n=3: a->d,b->e,...z->c
     (lambda (w);;"w" is the word to be encoded
-     'SOME_CODE_GOES_HERE ;; *** FUNCTION BODY IS MISSING ***
-      )))
+		(map (lambda (k) (vtl (modulo (+ n (ltv k)) 26))) w) ;;For each letter in the word, convert it to a value, add n to it, modulo the result by 26 so it wraps around, and convert it back to a letter
+	)))
 
 ;;encode a document
 ;;INPUT: a document "d" and a "encoder"
 ;;OUTPUT: an encoded document using a provided encoder
 (define encode-d;;this encoder is supposed to be the output of "encode-n"
   (lambda (d encoder)
-    'SOME_CODE_GOES_HERE ;; *** FUNCTION BODY IS MISSING ***
+		(map (lambda (k) (parHandler k encoder)) d) ;;For each paragraph, pass it on to the paragraph handler
     ))
     
 ;; -----------------------------------------------------

@@ -6,7 +6,6 @@
 
 ;; -----------------------------------------------------
 ;; character-value, value-character mapping
-
 (define ltv  
   (lambda (x)
     (cond
