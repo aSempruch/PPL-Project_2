@@ -14,9 +14,9 @@
 
 ;; contains a test-dictionary, which has a much smaller dictionary for testing
 ;; the dictionary is needed for spell checking
-(load "test-dictionary.ss")
+;;(load "test-dictionary.ss")
 
-;; (load "dictionary.ss") ;; the real thing with 45,000 words
+(load "dictionary.ss") ;; the real thing with 45,000 words
 
 
 ;; -----------------------------------------------------
@@ -35,9 +35,9 @@
 (define nloop
  (lambda (par n numWords)
   (cond 
-   ((>= (try (parHandler par (encode-n n))) (quotient numWords 2)) n)
-   ((> n 26) -1)
-   (else (nloop par (+ n 1) numWords))
+   ((> (try (parHandler par (encode-n n))) (quotient numWords 2)) n);;More than half of words are spelled correctly for this 'n
+   ((> n 26) -1) ;;Could not find 'n
+   (else (nloop par (+ n 1) numWords)) ;;Try next 'n
   )
  )
 )
@@ -45,22 +45,34 @@
 (define nloopB
  (lambda (par n)
   (cond
-   ((validOccurences (countLetters (flatten (parHandler par (encode-n n)))0))n)
-   ((> n 26) -1)
+   ((validOccurences (countLetters (flatten (parHandler par (encode-n n)))0))n) ;;e-t-a are most frequent in that order for this 'n
+   ((> n 26) -1) ;;Could not find 'n
    (else (nloopB par (+ n 1)))
   )
  )
 )
 
+;;This version checks if the letters e-t-a occur most frequently in this order, making it a tighter restriction and may not be the way the professor inteded
+;(define validOccurences
+; (lambda (nums)
+;  (cond
+;   ((and (eCheck nums) (tCheck nums) (aCheck nums))#t) ;;e-t-a are in valid occurence order
+;   (else #f)
+;  )
+; )
+;)
+
 (define validOccurences
  (lambda (nums)
   (cond
-   ((and (eCheck nums) (tCheck nums) (aCheck nums))#t)
+   ((eCheck nums)#t) ;;e is most frequent letter
    (else #f)
   )
  )
 )
 
+
+;;Checks if e is most common
 (define eCheck
  (lambda (nums)
   (cond
@@ -69,18 +81,20 @@
   )
  )
 )
+;;Check if t is second most common
 (define tCheck
  (lambda (nums)
   (cond
-   ((and (equal? (list-ref (sort nums >) 1) (list-ref nums 19)) (not(equal? (list-ref nums 1)(list-ref nums 2)))) #t)
+   ((and (equal? (list-ref (sort nums >) 1) (list-ref nums 19)) (not(equal? (list-ref (sort nums >) 1)(list-ref (sort nums >) 2)))) #t)
    (else #f)
   )
  )
 )
+;;Check if a is third most common
 (define aCheck
  (lambda (nums)
   (cond
-   ((and (equal? (list-ref (sort nums >) 2) (list-ref nums 0)) (not(equal? (list-ref nums 2)(list-ref nums 3)))) #t)
+   ((and (equal? (list-ref (sort nums >) 2) (list-ref nums 0)) (not(equal? (list-ref (sort nums >) 2)(list-ref (sort nums >) 3)))) #t)
    (else #f)
   )
  )
@@ -197,10 +211,10 @@
 ;;generate a decoder using frequency analysis
 ;;INPUT:same as above
 ;;OUTPUT:same as above
-;(define Gen-Decoder-B
-;  (lambda (p)
-;   (encode-n (nloopB p 0 (letterCount p)))
-;  ))
+(define Gen-Decoder-B
+  (lambda (p)
+   (encode-n (nloopB p 0))
+  ))
 
 ;; -----------------------------------------------------
 ;; CODE-BREAKER FUNCTION
@@ -210,9 +224,9 @@
 ;;OUTPUT: a decoded document
 (define Code-Breaker
   (lambda (d decoder)
-    (
-     'SOME_CODE_GOES_HERE ;; *** FUNCTION BODY IS MISSING ***
-     )))
+	(encode-d d decoder) 
+  )
+)
 
 ;; -----------------------------------------------------
 ;; EXAMPLE APPLICATIONS OF FUNCTIONS
